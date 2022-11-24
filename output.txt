@@ -1,0 +1,17 @@
+commit aa6bb758d11e599dfd53daab01b87bb9aa7c567e
+Author: Serega <solodovnikov.sf@edu.spbstu.ru>
+Date:   Thu Oct 20 19:28:35 2022 +0300
+
+    pls delete pycache
+
+ .idea/.gitignore                               |   3 ---
+ .idea/SMO.iml                                  |  10 ----------
+ .idea/inspectionProfiles/profiles_settings.xml |   6 ------
+ .idea/misc.xml                                 |   7 -------
+ .idea/modules.xml                              |   8 --------
+ .idea/vcs.xml                                  |   6 ------
+ __pycache__/constants.cpython-39.pyc           | Bin 223 -> 0 bytes
+ 7 files changed, 40 deletions(-)
+
+commit aa6bb758d11e599dfd53daab01b87bb9aa7c567e
+
