@@ -57,7 +57,7 @@ public class Parser {
         }
     }
 
-    public List<Programmer> writeToFile() {
+    public List<Programmer> getProgrammers() {
         List<Programmer> result = new ArrayList<>();
             for (var programmer: progerInfo.entrySet()) {
                 result.add(new Programmer(programmer.getValue(), programmer.getKey()));

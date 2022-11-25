@@ -9,17 +9,15 @@ public class Main {
     public static void main(String[] args) {
         Parser parser = new Parser();
         String fileName = "KibTest";
-        parser
-                .parse(fileName + ".txt").writeToFile();
-        var allPorgers = parser.writeToFile();
+        var allPorgers = parser.parse(fileName + ".txt").getProgrammers();
         List<Programmer> result = new ArrayList<>();
         for (var prog: allPorgers) {
-            int counter = 0;
+            int commCounter = 0;
             var commits = prog.getFileCommits().values();
             for (var comm: commits) {
-                counter += comm.size();
+                commCounter += comm.size();
             }
-           if (counter > 15_000) {
+           if (commCounter > 15_000) {
                result.add(prog);
            }
         }
