@@ -8,9 +8,8 @@ public class Parser {
     Map<String, String> progerInfo = new HashMap<>();
     Set<String> allFiles = new HashSet<>();
     Set<Commit> allCommits = new HashSet<>();
-    int COUNTER;
 
-    public void newParse(String path) {
+    public Parser parse(String path) {
         try (BufferedReader reader = new BufferedReader(new FileReader(path, StandardCharsets.UTF_16))) {
             String line = reader.readLine();
             line = reader.readLine();
@@ -26,9 +25,10 @@ public class Parser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return this;
     }
 
-    public void parseToObject(List<String> commitInfo) {
+    private void parseToObject(List<String> commitInfo) {
         List<String> files = commitInfo.stream()
                 .filter(l -> l.contains("|") && !l.toLowerCase().contains("bin"))
                 .map(l -> l.split("\\|")[0].trim())
@@ -36,10 +36,9 @@ public class Parser {
         String[] authorInfo = commitInfo.get(0).split(" ");
         if (authorInfo[0].toLowerCase().contains("merge"))
             return;
-        System.out.println(commitInfo);
         int amountElems = authorInfo.length;
         String authorName = authorInfo[0];
-        String authorEmail = authorInfo[amountElems-1].substring(1, authorInfo[amountElems-1].length() - 1);
+        String authorEmail = authorInfo[amountElems - 1].substring(1, authorInfo[amountElems - 1].length() - 1);
         progerInfo.put(authorEmail, authorName);
         String[] dateInfo = commitInfo.get(1).split(" ");
         String date = dateInfo[7] + "." + getFullMonthName(dateInfo[4]);
@@ -60,33 +59,13 @@ public class Parser {
 
     public List<Programmer> writeToFile() {
         List<Programmer> result = new ArrayList<>();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("JSON.txt"))) {
-            Map<String, List<Commit>> fileCommits = new HashMap<>();
-            for (var proger: progerInfo.entrySet()) {
-                result.add(new Programmer(proger.getValue(), proger.getKey()));
+            for (var programmer: progerInfo.entrySet()) {
+                result.add(new Programmer(programmer.getValue(), programmer.getKey()));
             }
             for (var commit: allCommits) {
                var r = result.stream().filter(pr -> pr.getEmail().equals(commit.getAuthEmail())).toList().get(0);
                r.setCommits(commit);
-//            for (var proger: progerInfo.entrySet()) {
-//                int COUNTER = 0;
-//                System.out.println("+AUTHOR");
-//                for (var file: allFiles) {
-//                    List<Commit> commits = new ArrayList<>();
-//                    for (var commit: allCommits) {
-//
-//                        if (commit.getFileName().equals(file) && commit.getAuthEmail().contains(proger.getKey())) {
-//                            commits.add(commit);
-//                        }
-//                    }
-//                    fileCommits.put(file, commits);
-//                }
-//                result.add(new Programmer(proger.getValue(), proger.getKey(), fileCommits));
             }
-            writer.write(result.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return result;
     }
 

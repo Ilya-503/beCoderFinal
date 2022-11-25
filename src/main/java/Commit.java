@@ -30,13 +30,4 @@ public class Commit {
     public String getAuthName() {
         return authorName;
     }
-
-//    @Override
-//    public String toString() {
-//        return new StringBuilder()
-//                .append(Date).append(" ")
-//                .append(fileName).append(" ")
-//                .append(type).toString();
-//    }
-
 }

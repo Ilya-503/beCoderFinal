@@ -32,26 +32,4 @@ public class Programmer {
         return Commits;
     }
 
-//    @Override
-//    public String toString() {
-//        return new StringBuilder()
-//                .append("Name:").append(name).append(",")
-//                .append("Email:").append(email).append(",")
-//                .append(fileCommits)
-//                .append("}")
-//                .toString();
-//    }
 }
-
-/**
- * [JsonPropertyName("Name")]
- *         public string Name { get; set; }
- *
- *         [JsonPropertyName("Email")]
- *         public string Email { get; set; }
- *
- *         [JsonPropertyName("Commits")]
- *         public Dictionary<string, List<Commit>> Commits { get; set; } = new Dictionary<string, List<Commit>>();
- *
- *
- */
