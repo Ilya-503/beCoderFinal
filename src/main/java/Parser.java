@@ -3,12 +3,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Парсер, который из файла .txt формата, где сохранены все комиты репозитория, преобразует его в JSON файл.
+ */
 public class Parser {
 
     Map<String, String> progerInfo = new HashMap<>();
     Set<String> allFiles = new HashSet<>();
     Set<Commit> allCommits = new HashSet<>();
 
+    /**
+     * Вытаскиваем из файла по одному комиту и парсим его.
+     * @param path путь к файлу
+     * @return возвращаем этот же парсер для цепочки вызовов
+     */
     public Parser parse(String path) {
         try (BufferedReader reader = new BufferedReader(new FileReader(path, StandardCharsets.UTF_16))) {
             String line = reader.readLine();
@@ -28,6 +36,10 @@ public class Parser {
         return this;
     }
 
+    /**
+     * Парсим информацию об одном коммите, преобразуем в Java - объект.
+     * @param commitInfo Лист со строками комита
+     */
     private void parseToObject(List<String> commitInfo) {
         List<String> files = commitInfo.stream()
                 .filter(l -> l.contains("|") && !l.toLowerCase().contains("bin"))
@@ -57,6 +69,9 @@ public class Parser {
         }
     }
 
+    /**
+     * @return все программисты репо
+     */
     public List<Programmer> getProgrammers() {
         List<Programmer> result = new ArrayList<>();
             for (var programmer: progerInfo.entrySet()) {

@@ -1,6 +1,28 @@
 public class Commit {
 
-    private String Date, FileName, authorName, authorEmail;
+    /**
+     * Дата, когда был создан коммит.
+     */
+    private String Date;
+
+    /**
+     * Название файла, который затрагивает этот коммит.
+     */
+    private String FileName;
+
+    /**
+     * Имя автора коммита
+     */
+    private String authorName;
+
+    /**
+     * Email  автора коммита.
+     */
+    private String authorEmail;
+
+    /**
+     * Тип коммита: обычный или фикс.
+     */
     Enum<CommitType> Type;
 
     Commit(String date, String fileName, String authorName, String authorEmail, Enum<CommitType> type) {

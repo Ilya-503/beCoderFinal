@@ -5,7 +5,19 @@ import java.util.Map;
 
 public class Programmer {
 
-    private String Name, Email;
+    /**
+     * Имя программиста
+     */
+    private String Name;
+
+    /**
+     * Почта программиста
+     */
+    private String Email;
+
+    /**
+     * Словарь: ключ: название файла; значение: список коммитов, в котором был затронут этот файл
+     */
     private Map<String, List<Commit>> Commits = new HashMap<>();
 
     Programmer(String name, String email) {

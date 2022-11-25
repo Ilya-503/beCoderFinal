@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
+
+    static String fileName = "KibTest";
+
     public static void main(String[] args) {
         Parser parser = new Parser();
-        String fileName = "KibTest";
+
         var allPorgers = parser.parse(fileName + ".txt").getProgrammers();
         List<Programmer> result = new ArrayList<>();
         for (var prog: allPorgers) {
