@@ -1,20 +1,26 @@
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Parser {    // 0 - fix, 1 - NOT fix
+public class Parser {
 
+    Map<String, String> progerInfo = new HashMap<>();
+    Set<String> allFiles = new HashSet<>();
+    Set<Commit> allCommits = new HashSet<>();
+    int COUNTER;
 
     public void newParse(String path) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(path, StandardCharsets.UTF_16))) {
             String line = reader.readLine();
-            while (!line.isEmpty()) {
-                line = reader.readLine();
+            line = reader.readLine();
+            while (line != null) {
                 List<String> commitInfo = new ArrayList<>();
-                while (!(line.matches("commit [\\d\\w]{40}") && line.length() == 47)) {
+                while (line != null && !(line.matches("commit [\\d\\w]{40}") && line.length() == 47)) {
                     commitInfo.add(line);
                     line = reader.readLine();
                 }
+                line = reader.readLine();
                 parseToObject(commitInfo);
             }
         } catch (IOException e) {
@@ -24,75 +30,87 @@ public class Parser {    // 0 - fix, 1 - NOT fix
 
     public void parseToObject(List<String> commitInfo) {
         List<String> files = commitInfo.stream()
-                .filter( l -> l.contains("|"))
+                .filter(l -> l.contains("|") && !l.toLowerCase().contains("bin"))
                 .map(l -> l.split("\\|")[0].trim())
                 .collect(Collectors.toList());
         String[] authorInfo = commitInfo.get(0).split(" ");
-        String authorName = authorInfo[1],
-                authorEmail = authorInfo[2];
+        if (authorInfo[0].toLowerCase().contains("merge"))
+            return;
+        System.out.println(commitInfo);
+        int amountElems = authorInfo.length;
+        String authorName = authorInfo[0];
+        String authorEmail = authorInfo[amountElems-1].substring(1, authorInfo[amountElems-1].length() - 1);
+        progerInfo.put(authorEmail, authorName);
         String[] dateInfo = commitInfo.get(1).split(" ");
         String date = dateInfo[7] + "." + getFullMonthName(dateInfo[4]);
         Enum<CommitType> type = CommitType.NotFix;
-        int commentStartIdx = 3; // where comments start
+        int commentStartIdx = 2; // where comments start
         String commentLine = commitInfo.get(commentStartIdx);
-        while (!commentLine.contains("|") && !commentLine.toLowerCase().contains("bin")) {
+        while (commentStartIdx < commitInfo.size() && !commentLine.contains("|")) {
+            commentLine = commitInfo.get(commentStartIdx);
             if (commitInfo.get(commentStartIdx).toLowerCase().contains("fix"))
                 type = CommitType.Fix;
             commentStartIdx++;
-            commentLine = commitInfo.get(commentStartIdx);
         }
-        for (var file: files) {
-            System.out.println(new Commit(date, file, type));
+        for (var file : files) {
+            allFiles.add(file);
+            allCommits.add(new Commit(date, file,  authorName, authorEmail, type));
+        }
+    }
+
+    public List<Programmer> writeToFile() {
+        List<Programmer> result = new ArrayList<>();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("JSON.txt"))) {
+            Map<String, List<Commit>> fileCommits = new HashMap<>();
+            for (var proger: progerInfo.entrySet()) {
+                result.add(new Programmer(proger.getValue(), proger.getKey()));
+            }
+            for (var commit: allCommits) {
+               var r = result.stream().filter(pr -> pr.getEmail().equals(commit.getAuthEmail())).toList().get(0);
+               r.setCommits(commit);
+//            for (var proger: progerInfo.entrySet()) {
+//                int COUNTER = 0;
+//                System.out.println("+AUTHOR");
+//                for (var file: allFiles) {
+//                    List<Commit> commits = new ArrayList<>();
+//                    for (var commit: allCommits) {
+//
+//                        if (commit.getFileName().equals(file) && commit.getAuthEmail().contains(proger.getKey())) {
+//                            commits.add(commit);
+//                        }
+//                    }
+//                    fileCommits.put(file, commits);
+//                }
+//                result.add(new Programmer(proger.getValue(), proger.getKey(), fileCommits));
+            }
+            writer.write(result.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+        private String getFullMonthName (String monthShortName) {
+            switch (monthShortName) {
+                case "Jan":
+                case "Feb":
+                case "Mar":
+                    return "01";
+                case "Apr":
+                case "May":
+                case "Jun":
+                    return "02";
+                case "Jul":
+                case "Aug":
+                case "Sep":
+                    return "03";
+                case "Oct":
+                case "Nov":
+                case "Dec":
+                    return "04";
+                default:
+                    return "year";
+            }
         }
     }
 
-    public void parseTo(String path) {
-        int type = 1;
-        List<String> changedFiles = new ArrayList<>();
-       try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-           String line = reader.readLine();
-           if (line.matches("commit [\\d\\w]{40}") && line.length() == 47) {
-               String[] authorInfo = reader.readLine().split(" ");
-               String authorName = authorInfo[0],
-                       authorEmail = authorInfo[1];
-               String[] dateInfo = reader.readLine().split(" ");
-               String date = dateInfo[7] + "." + dateInfo[4];
-
-               String s = reader.readLine();
-               while (!s.equals("|")) {
-                   if (s.toLowerCase().contains("fix"))
-                       type = 0;
-                   if (s.equals("|"))
-                       changedFiles.add(s.split("|")[0].trim());
-               }
-               s = reader.readLine();
-               while (s.contains("|")) {
-                   changedFiles.add(s.split("|")[0].trim());
-               }
-               reader.readLine();
-
-           }
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
-    }
-
-
-    private String getFullMonthName(String monthShortName) {
-        switch (monthShortName) {
-            case "Jan": return "01";
-            case "Feb": return "02";
-            case "Mar": return "03";
-            case "Apr": return "04";
-            case "May": return "05";
-            case "Jun": return "06";
-            case "Jul": return "07";
-            case "Aug": return "08";
-            case "Sep": return "09";
-            case "Oct": return "10";
-            case "Nov": return "11";
-            case "Dec": return "12";
-            default: return "year";
-        }
-    }
-}

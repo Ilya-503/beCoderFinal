@@ -1,20 +1,42 @@
 public class Commit {
 
-    private String date, fileName;
-    Enum<CommitType> type;
+    private String Date, FileName, authorName, authorEmail;
+    Enum<CommitType> Type;
 
-    Commit(String date, String fileName, Enum<CommitType> type) {
-        this.date = date;
-        this.fileName = fileName;
-        this.type = type;
+    Commit(String date, String fileName, String authorName, String authorEmail, Enum<CommitType> type) {
+        this.Date = date;
+        this.FileName = fileName;
+        this.authorName = authorName;
+        this.authorEmail = authorEmail;
+        this.Type = type;
     }
 
-    @Override
-    public String toString() {
-        return new StringBuilder()
-                .append(date).append(" ")
-                .append(fileName).append(" ")
-                .append(type).toString();
+    public String getDate() {
+        return Date;
     }
+
+    public String getFileName() {
+        return FileName;
+    }
+
+    public String getType() {
+        return Type.toString();
+    }
+
+    public String getAuthEmail() {
+        return authorEmail;
+    }
+
+    public String getAuthName() {
+        return authorName;
+    }
+
+//    @Override
+//    public String toString() {
+//        return new StringBuilder()
+//                .append(Date).append(" ")
+//                .append(fileName).append(" ")
+//                .append(type).toString();
+//    }
 
 }
