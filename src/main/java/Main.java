@@ -26,7 +26,7 @@ public class Main {
         }
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(new File(fileName + "_result.json"), result);
+            mapper.writeValue(new File("RESULT.json"), result);
         } catch (IOException e) {
             e.printStackTrace();
         }
